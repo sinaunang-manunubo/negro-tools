@@ -1,0 +1,116 @@
+const express = require("express")
+const multer = require("multer")
+const axios = require("axios")
+const cors = require("cors")
+const fs = require("fs")
+const path = require("path")
+const cookieParser = require("cookie-parser")
+
+const app = express()
+const PORT = process.env.PORT || 3000
+
+app.use(cors())
+app.use(cookieParser())
+app.set("trust proxy", true)
+app.use(express.json())
+app.use(express.static("imgtools"))
+app.use("/uploads", express.static("uploads"))
+
+if (!fs.existsSync("uploads")) fs.mkdirSync("uploads")
+
+const storage = multer.diskStorage({
+  destination: "uploads/",
+  filename: (_, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname))
+  }
+})
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 }
+})
+
+const fileURL = (req, file) =>
+  `${req.protocol}://${req.get("host")}/uploads/${file.filename}`
+
+app.post("/removebg", upload.single("image"), async (req, res) => {
+  try {
+    const img = fileURL(req, req.file)
+    const api = "https://api-library-kohi.onrender.com/api/removebg?url=" + encodeURIComponent(img)
+    const r = await axios.get(api)
+    res.json({ url: r.data.data.url })
+  } catch {
+    res.status(500).json({ error: true })
+  }
+})
+
+app.post("/upscale", upload.single("image"), async (req, res) => {
+  try {
+    const img = fileURL(req, req.file)
+    const api = "https://api-library-kohi.onrender.com/api/upscale?url=" + encodeURIComponent(img)
+    const r = await axios.get(api)
+    res.json({ url: r.data.data.url })
+  } catch {
+    res.status(500).json({ error: true })
+  }
+})
+
+app.post("/blur", upload.single("image"), async (req, res) => {
+  try {
+    const img = fileURL(req, req.file)
+    res.json({ url: "https://api.popcat.xyz/v2/blur?image=" + encodeURIComponent(img) })
+  } catch {
+    res.status(500).json({ error: true })
+  }
+})
+
+app.get("/info", (req, res) => {
+  res.json({
+    ip: req.headers["x-forwarded-for"]?.split(",")[0] || req.socket.remoteAddress,
+    time: new Date().toISOString()
+  })
+})
+
+app.post("/accept-terms", (req, res) => {
+  res.cookie("termsAccepted", "true", {
+    maxAge: 31536000000,
+    sameSite: "lax",
+    httpOnly: false
+  })
+  res.json({ success: true })
+})
+
+app.get("/download", async (req, res) => {
+  try {
+    const url = req.query.url
+    if (!url) return res.status(400).end()
+
+    const response = await axios.get(url, { responseType: "stream" })
+    const filename = "image_" + Date.now() + path.extname(url.split("?")[0] || ".png")
+
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`)
+    res.setHeader("Content-Type", "application/octet-stream")
+
+    response.data.pipe(res)
+  } catch {
+    res.status(500).end()
+  }
+})
+
+setInterval(() => {
+  fs.readdir("uploads", (_, files) => {
+    if (!files) return
+    files.forEach(f => {
+      const p = path.join("uploads", f)
+      fs.stat(p, (_, stat) => {
+        if (stat && Date.now() - stat.mtimeMs > 3600000) {
+          fs.unlink(p, () => {})
+        }
+      })
+    })
+  })
+}, 1800000)
+
+app.listen(PORT, () => {
+  console.log("Backend running on http://localhost:" + PORT)
+})
