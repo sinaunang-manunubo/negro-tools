@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Image Tools</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+<div class="container">
+  <div class="card">
+
+    <div class="header">
+      <h2>🪄 IMG TOOLS</h2>
+      <p>Remove BG · Upscale · Blur</p>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tool="removebg">Remove BG</div>
+      <div class="tab" data-tool="upscale">Upscale</div>
+      <div class="tab" data-tool="blur">Blur</div>
+    </div>
+
+    <input type="file" id="file" accept="image/*">
+    <img id="preview" class="preview">
+
+    <button class="action-btn" id="processBtn">Process Image</button>
+
+    <div class="loader" id="loader"></div>
+
+    <button id="downloadBtn" class="download-btn">⬇️ Download Image</button>
+
+    <div class="donation">
+      <h4>❤️ Support via GCash</h4>
+      <p>Scan the QR or use your GCash app</p>
+      <img src="https://i.ibb.co/HfKJjYzH/GCash-My-QR-05012026134509-PNG-2.jpg" alt="GCash QR">
+    </div>
+
+    <div class="sys">
+      <div id="date"></div>
+      <div id="ip"></div>
+      <div id="battery"></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="floating theme" id="themeBtn">🌙</div>
+<div class="floating heart" id="heartBtn">❤️</div>
+
+<div class="modal" id="termsModal">
+  <div class="modal-card">
+    <h3>👋 Welcome</h3>
+    <p>By using this site you agree to our<br><b>Terms & Privacy Policy</b>.</p>
+    <button id="agreeBtn">Agree & Continue</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
