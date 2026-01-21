@@ -1,23 +1,35 @@
 {
-  "name": "image-tools-backend",
-  "version": "1.0.0",
-  "description": "Image tools backend (Remove BG, Upscale, Blur)",
+  "name": "image-processing-tool",
+  "version": "1.1.0",
+  "description": "Image Processing Tool with Background Removal and Upscaling",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [
+    "image-processing",
+    "background-removal",
+    "upscale",
+    "tool"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
   "dependencies": {
-    "axios": "^1.6.7",
+    "axios": "^1.6.0",
+    "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
-    "express": "^4.19.2",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.0.0",
     "multer": "^1.4.5-lts.1"
   },
   "devDependencies": {
-    "nodemon": "^3.0.3"
+    "nodemon": "^3.0.1"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=16.0.0"
   }
 }
